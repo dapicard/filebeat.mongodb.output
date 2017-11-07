@@ -7,6 +7,8 @@ https://www.elastic.co/guide/en/beats/devguide/current/beats-contributing.html#s
 
 And compiling this repository using :
 * go build
+
 To build the filebeat, and :
+
 * ./filebeat.mongodb.output
 To launch it.
