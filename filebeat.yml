@@ -1,0 +1,64 @@
+###################### Filebeat Configuration Example #########################
+
+# This file is an example configuration file highlighting only the most common
+# options. The filebeat.reference.yml file from the same directory contains all the
+# supported options with more comments. You can use it as a reference.
+#
+# You can find the full configuration reference here:
+# https://www.elastic.co/guide/en/beats/filebeat/index.html
+
+# For more available modules and options, please see the filebeat.reference.yml sample
+# configuration file.
+
+#=========================== Filebeat prospectors =============================
+
+filebeat.prospectors:
+
+- type: log
+
+  enabled: true
+
+  paths:
+    - /var/log/elasticsearch/*
+
+  fields:
+    myfield: myvalue
+
+
+#================================ Outputs =====================================
+
+#---------------------------- MongoDB output ---------------------------------
+output.mongodb:
+  
+  # URL format, according to mgo.v2 doc : [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]
+  # More info : https://godoc.org/gopkg.in/mgo.v2#Dial
+  hosts: ["mongodb://localhost:27017"]
+  
+  # The mongodb database to push to
+  db: "db1"
+  # The database collection to push to
+  # Could be configured like key/keys of the Redis output : https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_key_2
+  collection: "%{[fields.myfield]}"
+  
+  # https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_loadbalance
+  loadbalance: true
+
+  # https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_timeout_4
+  timeout: 5s
+  
+  # https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_max_retries_4
+  max_retries: 3
+
+  # https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_bulk_max_size_4
+  bulk_max_size: 2048
+
+#================================ Logging =====================================
+
+# Sets log level. The default log level is info.
+# Available log levels are: critical, error, warning, info, debug
+#logging.level: debug
+
+# At debug level, you can selectively enable logging only for some components.
+# To enable all selectors use ["*"]. Examples of other selectors are "beat",
+# "publish", "service".
+#logging.selectors: ["*"]
