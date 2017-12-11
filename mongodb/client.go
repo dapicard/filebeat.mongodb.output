@@ -115,8 +115,9 @@ func (c *client) makePublish(
 				bulks[collection] = bulk
 			}
 
-			debugf("Add document to bulk: %s", datum)
-			bulk.bulk.Insert(datum)
+			datum.Content.Fields.Put("@timestamp", datum.Content.Timestamp)
+			debugf("Add document to bulk: %s", datum.Content.Fields)
+			bulk.bulk.Insert(datum.Content.Fields)
 			bulk.data = append(bulk.data, datum)
 		}
 		c.stats.Dropped(dropped)

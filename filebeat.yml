@@ -19,17 +19,28 @@ filebeat.prospectors:
   enabled: true
 
   paths:
-    - /var/log/elasticsearch/*
+    - D:/tmp/python/out.log
 
   fields:
-    myfield: myvalue
+    collection: myvalue
+  fields_under_root: true
+  
+  json.keys_under_root: true
+  json.overwrite_keys: true
+  
+
+processors:
+#- include_fields:
+#    fields: ["cpu"]
+- drop_fields:
+    fields: ["@metadata", "beat", "source", "offset", "prospector"]
 
 
 #================================ Outputs =====================================
 
 #---------------------------- MongoDB output ---------------------------------
 output.mongodb:
-  
+  enabled: true
   # URL format, according to mgo.v2 doc : [mongodb://][user:pass@]host1[:port1][,host2[:port2],...][/database][?options]
   # More info : https://godoc.org/gopkg.in/mgo.v2#Dial
   hosts: ["mongodb://localhost:27017"]
@@ -38,7 +49,7 @@ output.mongodb:
   db: "db1"
   # The database collection to push to
   # Could be configured like key/keys of the Redis output : https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_key_2
-  collection: "%{[fields.myfield]}"
+  collection: "%{[collection]}"
   
   # https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_loadbalance
   loadbalance: true
@@ -52,6 +63,18 @@ output.mongodb:
   # https://www.elastic.co/guide/en/beats/filebeat/current/redis-output.html#_bulk_max_size_4
   bulk_max_size: 2048
 
+output.file:
+  # Boolean flag to enable or disable the output module.
+  enabled: false
+
+  # Path to the directory where to save the generated files. The option is
+  # mandatory.
+  path: "/tmp/filebeat/"
+
+  # Name of the generated files. The default is `filebeat` and it generates
+  # files: `filebeat`, `filebeat.1`, `filebeat.2`, etc.
+  filename: filebeat.json
+  
 #================================ Logging =====================================
 
 # Sets log level. The default log level is info.
