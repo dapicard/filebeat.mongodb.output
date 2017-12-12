@@ -18,31 +18,31 @@ type publishFn func(
 
 type client struct {
 	outputs.NetworkClient
-	url			string
-	stats    	*outputs.Stats
-	db       	string
-	collection  outil.Selector
-	publish  	publishFn
-	timeout  	time.Duration
+	url        string
+	stats      outputs.Observer
+	db         string
+	collection outil.Selector
+	publish    publishFn
+	timeout    time.Duration
 }
 
 type bulkInfo struct {
-	data	[]publisher.Event
-	bulk	*mgo.Bulk
+	data []publisher.Event
+	bulk *mgo.Bulk
 }
 
 func newClient(
-	url	string,
-	stats *outputs.Stats,
+	url string,
+	stats outputs.Observer,
 	timeout time.Duration,
-	db string, 
+	db string,
 	collection outil.Selector,
 ) *client {
 	return &client{
-		url:		url,
-		stats:    	stats,
-		timeout:  	timeout,
-		db:       	db,
+		url:        url,
+		stats:      stats,
+		timeout:    timeout,
+		db:         db,
 		collection: collection,
 	}
 }
@@ -107,7 +107,7 @@ func (c *client) makePublish(
 				continue
 			}
 			bulk, exists := bulks[collection]
-			if (!exists) {
+			if !exists {
 				bulk = bulkInfo{
 					bulk: database.C(collection).Bulk(),
 					data: []publisher.Event{},

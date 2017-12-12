@@ -14,14 +14,13 @@ type mongodbOut struct {
 
 var debugf = logp.MakeDebug("mongodb")
 
-
 func init() {
 	outputs.RegisterType("mongodb", makeMongodb)
 }
 
 func makeMongodb(
 	beat beat.Info,
-	stats *outputs.Stats,
+	stats outputs.Observer,
 	cfg *common.Config,
 ) (outputs.Group, error) {
 	config := defaultConfig
